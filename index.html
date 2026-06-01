@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUMMER — 分镜表</title>
+<style>
+  :root {
+    --bg: #000;
+    --card: rgba(22,22,24,0.82);
+    --card-hover: rgba(30,30,34,0.88);
+    --card-border: rgba(255,255,255,0.06);
+    --card-border-hover: rgba(255,255,255,0.12);
+    --text: #f5f5f7;
+    --text-secondary: #a1a1a6;
+    --text-tertiary: #6e6e73;
+    --accent: #ff6b3d;
+    --accent-soft: rgba(255,107,61,0.15);
+    --blue: #4589ff;
+    --blue-soft: rgba(69,137,255,0.12);
+    --gold: #ffb340;
+    --green: #3dbe65;
+    --glass: rgba(255,255,255,0.04);
+    --glass-strong: rgba(255,255,255,0.08);
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.5);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-xs: 6px;
+    --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang TC', 'Noto Sans TC', sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang TC', 'Noto Sans TC', sans-serif;
+    --font-mono: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* ── Ambient background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,107,61,0.06), transparent),
+      radial-gradient(ellipse 60% 60% at 80% 80%, rgba(69,137,255,0.04), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 100px 24px 80px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3em, 8vw, 6em);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .hero .sub {
+    font-size: 1.1em;
+    color: var(--text-secondary);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    text-align: center;
+  }
+
+  .hero-stat .num {
+    font-family: var(--font-display);
+    font-size: 2em;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-stat .label {
+    font-size: 0.78em;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  .hero-stat.divider {
+    width: 1px;
+    background: rgba(255,255,255,0.08);
+    align-self: stretch;
+  }
+
+  /* ── Container ── */
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Scene section ── */
+  .scene {
+    margin-bottom: 80px;
+  }
+
+  .scene-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 0 24px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .scene-num {
+    font-family: var(--font-display);
+    font-size: 2.2em;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    min-width: 60px;
+  }
+
+  .scene-info h2 {
+    font-family: var(--font-display);
+    font-size: 1.25em;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  .scene-info .tags {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 0.72em;
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: var(--glass);
+    color: var(--text-secondary);
+    letter-spacing: 0.03em;
+    font-family: var(--font-mono);
+  }
+
+  .tag.loc { background: rgba(69,137,255,0.12); color: #6aa0ff; }
+  .tag.time { background: rgba(255,179,64,0.12); color: #ffb340; }
+  .tag.type { background: rgba(61,190,101,0.12); color: #4ecb70; }
+
+  /* ── Shot grid ── */
+  .shots {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .shot {
+    display: grid;
+    grid-template-columns: 440px 1fr;
+    gap: 0;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+  }
+
+  .shot:hover {
+    border-color: var(--card-border-hover);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+
+  .shot.key {
+    border-color: rgba(255,107,61,0.2);
+  }
+
+  .shot.key:hover {
+    border-color: rgba(255,107,61,0.35);
+  }
+
+  /* ── Frame panel ── */
+  .frame-panel {
+    position: relative;
+    background: #0a0a0c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    min-height: 300px;
+    border-right: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .frame-panel svg {
+    width: 100%;
+    height: 100%;
+    max-height: 320px;
+    border-radius: 4px;
+  }
+
+  .frame-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.3);
+    background: rgba(0,0,0,0.6);
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .frame-badge.key {
+    color: var(--accent);
+  }
+
+  /* ── Info panel ── */
+  .info-panel {
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .info-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .shot-id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+
+  .shot-id.blue {
+    background: var(--blue-soft);
+    color: var(--blue);
+  }
+
+  .shot-type {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.04em;
+  }
+
+  .shot-title {
+    font-family: var(--font-display);
+    font-size: 1.05em;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .shot-desc {
+    font-size: 0.88em;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  .shot-desc strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .shot-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75em;
+    color: var(--text-tertiary);
+  }
+
+  .meta-item .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+  }
+
+  .meta-item .dot.cam { background: var(--blue); }
+  .meta-item .dot.dur { background: var(--gold); }
+  .meta-item .dot.aud { background: var(--green); }
+
+  .dialogue-block {
+    margin-top: 4px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.03);
+    border-radius: var(--radius-xs);
+    border-left: 2px solid rgba(255,255,255,0.1);
+    font-size: 0.82em;
+    color: #999;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .dialogue-block .char {
+    color: var(--blue);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* ── Transition ── */
+  .transition {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 8px 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--text-tertiary);
+  }
+
+  .transition::before,
+  .transition::after {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* ── Two-col variant ── */
+  .shots-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .shots-2col .shot {
+    grid-template-columns: 1fr;
+  }
+
+  .shots-2col .frame-panel {
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    min-height: 200px;
+  }
+
+  .shots-2col .info-panel {
+    padding: 18px 22px;
+  }
+
+  /* ── End card ── */
+  .end-card {
+    text-align: center;
+    padding: 80px 24px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .end-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.6em;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .end-card p {
+    color: var(--text-tertiary);
+    font-size: 0.85em;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .shot {
+      grid-template-columns: 1fr;
+    }
+
+    .frame-panel {
+      border-right: none;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      min-height: 220px;
+    }
+
+    .info-panel {
+      padding: 20px 22px;
+    }
+
+    .shots-2col {
+      grid-template-columns: 1fr;
+    }
+
+    .hero {
+      padding: 60px 24px 50px;
+    }
+
+    .hero h1 {
+      font-size: 2.4em;
+    }
+
+    .hero-meta {
+      gap: 16px;
+    }
+
+    .hero-stat .num {
+      font-size: 1.4em;
+    }
+
+    .hero-stat.divider {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<header class="hero">
+  <div class="hero-eyebrow">Storyboard / 分镜表</div>
+  <h1>SUMMER</h1>
+  <div class="sub">我的發科</div>
+  <div class="hero-meta">
+    <div class="hero-stat">
+      <div class="num">褚東泫</div>
+      <div class="label">編劇 / 導演</div>
+    </div>
+    <div class="hero-stat divider"></div>
+    <div class="hero-stat">
+      <div class="num">青春劇情</div>
+      <div class="label">類型</div>
+    </div>
+    <div class="hero-stat divider"></div>
+    <div class="hero-stat">
+      <div class="num">9</div>
+      <div class="label">幕</div>
+    </div>
+    <div class="hero-stat divider"></div>
+    <div class="hero-stat">
+      <div class="num">42</div>
+      <div class="label">鏡</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════ SCENE 1 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">01</div>
+    <div class="scene-info">
+      <h2>海邊 · 沙灘</h2>
+      <div class="tags">
+        <span class="tag loc">海邊沙灘</span>
+        <span class="tag time">正午</span>
+        <span class="tag type">外 / 日</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <!-- 1-1 -->
+    <div class="shot key">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sk1_1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7aacd0"/><stop offset="40%" stop-color="#94bed8"/><stop offset="60%" stop-color="#b4cce0"/><stop offset="100%" stop-color="#c8d8e8"/></linearGradient>
+            <linearGradient id="sea1_1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3a6088"/><stop offset="100%" stop-color="#4e7498"/></linearGradient>
+            <linearGradient id="snd1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c8ae80"/><stop offset="100%" stop-color="#d8c8a8"/></linearGradient>
+          </defs>
+          <rect width="400" height="260" fill="url(#sk1_1)"/>
+          <rect y="110" width="400" height="60" fill="url(#sea1_1)"/>
+          <ellipse cx="200" cy="114" rx="260" ry="4" fill="rgba(255,255,255,0.35)"/>
+          <ellipse cx="120" cy="118" rx="180" ry="3" fill="rgba(255,255,255,0.2)"/>
+          <rect y="170" width="400" height="90" fill="url(#snd1)"/>
+          <ellipse cx="100" cy="173" rx="80" ry="2" fill="#b89c6c" opacity="0.4"/>
+          <ellipse cx="300" cy="175" rx="60" ry="2" fill="#b89c6c" opacity="0.3"/>
+          <g transform="translate(200,190)">
+            <ellipse cx="0" cy="0" rx="10" ry="6" fill="#e8e8e8"/>
+            <circle cx="-10" cy="-4" r="5" fill="#e8e8e8"/>
+            <path d="M-12,-22 L-8,-6 L-0,-6" fill="#aaa"/>
+            <circle cx="-11" cy="-5" r="1" fill="#333"/>
+            <line x1="-6" y1="-2" x2="-6" y2="5" stroke="#ccc" stroke-width="1.2"/>
+            <line x1="3" y1="0" x2="4" y2="5" stroke="#ccc" stroke-width="1.2"/>
+          </g>
+        </svg>
+        <div class="frame-badge key">LS · 定鏡</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">1-1</span>
+          <span class="shot-type">Long Shot</span>
+        </div>
+        <div class="shot-title">廣闊海邊沙灘全景</div>
+        <div class="shot-desc">正午陽光直射，海浪平緩拍岸。一隻海鷗立於沙灘中央，姿態悠閒——<strong>開場定調鏡頭</strong>。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>固定廣角</span>
+          <span class="meta-item"><span class="dot dur"></span>~6s</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1-3 -->
+    <div class="shot">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sky_u" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3a5c94"/><stop offset="40%" stop-color="#5c84b8"/><stop offset="100%" stop-color="#90b4d8"/></linearGradient>
+          </defs>
+          <rect width="400" height="260" fill="url(#sky_u)"/>
+          <g transform="translate(200,160)" opacity="0.5">
+            <path d="M-25,-10 Q-15,-24 0,-15 Q15,-24 25,-10 Q15,-3 0,-8 Q-15,-3 -25,-10Z" fill="#d8d8d8"/>
+            <path d="M-35,-2 Q-18,-20 0,-12 Q18,-20 35,-2 Q18,6 0,2 Q-18,6 -35,-2Z" fill="#e8e8e8" opacity="0.5"/>
+          </g>
+          <ellipse cx="200" cy="70" rx="10" ry="4" fill="#bbb" opacity="0.25"/>
+        </svg>
+        <div class="frame-badge">LS · 仰角</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">1-3</span>
+          <span class="shot-type">遠景 / 仰角</span>
+        </div>
+        <div class="shot-title">海鷗升空融入藍天</div>
+        <div class="shot-desc">仰角跟拍海鷗急速升空。畫面由沙灘暖色調轉向天空冷藍調。海鷗逐漸化為天際黑點，最終融入天色——<strong>第一重消失</strong>。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>仰角 · 緩慢上搖</span>
+          <span class="meta-item"><span class="dot dur"></span>~8s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="transition">CUT TO BLACK · 片名字卡</div>
+</section>
+
+<!-- ═══════════ SCENE 2 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">02</div>
+    <div class="scene-info">
+      <h2>學校 · 家長會日</h2>
+      <div class="tags">
+        <span class="tag loc">高爾夫球場 / H3教室 / 倉庫</span>
+        <span class="tag time">正午</span>
+        <span class="tag type">外 & 內 / 日</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <!-- 2-3 -->
+    <div class="shot">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="win2" cx="0.68" cy="0.35" r="0.75"><stop offset="0%" stop-color="#ffe4b8"/><stop offset="100%" stop-color="#141210"/></radialGradient>
+          </defs>
+          <rect width="400" height="260" fill="#141210"/>
+          <rect x="180" y="18" width="185" height="170" rx="2" fill="none" stroke="#555" stroke-width="3"/>
+          <line x1="272" y1="18" x2="272" y2="188" stroke="#555" stroke-width="2"/>
+          <line x1="180" y1="98" x2="365" y2="98" stroke="#555" stroke-width="2"/>
+          <rect x="183" y="21" width="86" height="74" fill="#5a80a0" opacity="0.55"/>
+          <rect x="274" y="21" width="88" height="74" fill="#5a80a0" opacity="0.55"/>
+          <rect x="50" y="25" width="330" height="230" fill="url(#win2)" opacity="0.35"/>
+          <g transform="translate(270,75)">
+            <ellipse cx="0" cy="0" rx="10" ry="12" fill="#2a2824"/>
+            <rect x="-8" y="12" width="16" height="22" rx="3" fill="#2a2824"/>
+            <line x1="0" y1="12" x2="-18" y2="30" stroke="#2a2824" stroke-width="5" stroke-linecap="round"/>
+            <line x1="0" y1="12" x2="14" y2="40" stroke="#2a2824" stroke-width="5" stroke-linecap="round"/>
+            <line x1="14" y1="22" x2="22" y2="48" stroke="#2a2824" stroke-width="4"/>
+            <line x1="-8" y1="24" x2="-20" y2="50" stroke="#2a2824" stroke-width="4"/>
+          </g>
+          <rect x="20" y="195" width="90" height="5" rx="1" fill="#383430"/>
+          <rect x="30" y="160" width="80" height="4" rx="1" fill="#383430"/>
+        </svg>
+        <div class="frame-badge">MS · 側拍</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">2-3</span>
+          <span class="shot-type">Medium Shot</span>
+        </div>
+        <div class="shot-title">金善宇獨坐窗台</div>
+        <div class="shot-desc">教室空無一人。善宇坐在窗台上半身探出窗外，窗光勾勒出半邊輪廓——<strong>高對比自然光 · 半剪影效果</strong>。講台旁桌上空空蕩蕩。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>教室內側拍 · 窗光輪廓</span>
+          <span class="meta-item"><span class="dot dur"></span>~6s</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-6 KEY -->
+    <div class="shot key">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="spot2" cx="0.5" cy="0.15" r="0.55"><stop offset="0%" stop-color="#ffe8b8" stop-opacity="0.12"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
+          </defs>
+          <rect width="400" height="260" fill="#12100e"/>
+          <rect width="400" height="260" fill="url(#spot2)"/>
+          <rect x="120" y="10" width="160" height="14" rx="1" fill="#2a3840" opacity="0.25"/>
+          <rect x="10" y="50" width="120" height="5" rx="1" fill="#2a2a2a"/>
+          <rect x="10" y="95" width="120" height="5" rx="1" fill="#2a2a2a"/>
+          <rect x="180" y="20" width="60" height="78" rx="2" fill="#181814" stroke="#3a3a38" stroke-width="0.8"/>
+          <g transform="translate(210,68)" opacity="0.45">
+            <ellipse cx="0" cy="0" rx="10" ry="10" fill="none" stroke="#777" stroke-width="1"/>
+            <rect x="-4" y="-30" width="8" height="16" rx="1" fill="#777"/>
+            <line x1="0" y1="-14" x2="-12" y2="2" stroke="#777" stroke-width="1.5"/>
+            <line x1="0" y1="-14" x2="10" y2="0" stroke="#777" stroke-width="1.5"/>
+            <circle cx="0" cy="-34" r="2.5" fill="#777"/>
+          </g>
+          <g transform="translate(95,155)">
+            <ellipse cx="0" cy="0" rx="11" ry="12" fill="#1e1e1e"/>
+            <rect x="-9" y="12" width="18" height="14" rx="2" fill="#1e1e1e"/>
+            <line x1="-6" y1="16" x2="-18" y2="28" stroke="#1e1e1e" stroke-width="4"/>
+            <line x1="6" y1="15" x2="18" y2="24" stroke="#1e1e1e" stroke-width="4"/>
+            <line x1="6" y1="18" x2="36" y2="14" stroke="#1e1e1e" stroke-width="3.5"/>
+            <line x1="-6" y1="20" x2="30" y2="16" stroke="#1e1e1e" stroke-width="3.5"/>
+          </g>
+          <rect x="65" y="172" width="48" height="34" rx="2" fill="#302e28" stroke="#4a4a44" stroke-width="1"/>
+          <g transform="translate(89,178)">
+            <rect x="-18" y="2" width="34" height="6" rx="2" fill="#6a6a6a"/>
+            <rect x="10" y="-2" width="10" height="11" rx="3" fill="#5a5a5a"/>
+            <rect x="-16" y="-4" width="10" height="5" rx="1.5" fill="#6a6a6a"/>
+          </g>
+          <rect x="120" y="182" width="30" height="22" fill="#e8dcc0" opacity="0.55" transform="rotate(4,135,193)"/>
+          <circle cx="130" cy="190" r="4" fill="none" stroke="#d44" stroke-width="1.5" opacity="0.8"/>
+        </svg>
+        <div class="frame-badge key">FS → CU · 關鍵鏡</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">2-6</span>
+          <span class="shot-type">全景 → 特寫</span>
+        </div>
+        <div class="shot-title">倉庫 · 發現槍與地圖</div>
+        <div class="shot-desc">倉庫幽暗，善宇打冷顫走入。牆上<strong>西西弗斯畫像</strong>作為背景裝置。蹲下打開盒子——<strong>一把槍</strong>和<strong>一張被紅筆圈過的海邊地圖</strong>。全片核心道具登場。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>全景跟拍 → 緩推至盒子特寫</span>
+          <span class="meta-item"><span class="dot dur"></span>~15s</span>
+          <span class="meta-item"><span class="dot aud"></span>沉靜 · 單束自然光</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-8B -->
+    <div class="shot">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="260" fill="#181614"/>
+          <rect y="48" width="400" height="170" fill="#22201c"/>
+          <rect y="210" width="400" height="3" fill="#2a2824"/>
+          <rect y="54" width="400" height="2" fill="#2a2824"/>
+          <line x1="0" y1="75" x2="200" y2="150" stroke="#262420" stroke-width="1"/>
+          <line x1="400" y1="75" x2="200" y2="150" stroke="#262420" stroke-width="1"/>
+          <rect x="180" y="85" width="36" height="58" rx="1" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+          <line x1="198" y1="85" x2="198" y2="143" stroke="#3a3a3a" stroke-width="1"/>
+          <rect x="182" y="87" width="15" height="25" fill="#4a6080" opacity="0.2"/>
+          <g transform="translate(260,110)">
+            <rect x="-48" y="-38" width="60" height="100" rx="1" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+            <circle cx="12" cy="18" r="2.5" fill="#4a4a4a"/>
+            <ellipse cx="0" cy="-6" rx="9" ry="11" fill="#1a1a1a"/>
+            <rect x="-6" y="5" width="12" height="26" rx="2" fill="#1a1a1a"/>
+            <line x1="0" y1="5" x2="-10" y2="24" stroke="#1a1a1a" stroke-width="3.5"/>
+            <line x1="0" y1="5" x2="8" y2="28" stroke="#1a1a1a" stroke-width="3.5"/>
+            <line x1="6" y1="18" x2="14" y2="36" stroke="#1a1a1a" stroke-width="3"/>
+            <line x1="-6" y1="19" x2="-14" y2="36" stroke="#1a1a1a" stroke-width="3"/>
+            <path d="M-9,-16 Q0,-24 9,-16 Q7,-14 0,-15 Q-7,-14 -9,-16Z" fill="#111"/>
+          </g>
+        </svg>
+        <div class="frame-badge">CU · 緩推</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">2-8B</span>
+          <span class="shot-type">Close-Up · 緩推</span>
+        </div>
+        <div class="shot-title">崔支援目睹全程</div>
+        <div class="shot-desc">走廊盡頭，支援獨自站在辦公室門口。鏡頭緩推至面部——<strong>眼神從茫然 → 驚訝 → 篤定</strong>。她看到了善宇跑出倉庫的背影。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>走廊深處 → 面部特寫</span>
+          <span class="meta-item"><span class="dot dur"></span>~5s</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-9 -->
+    <div class="shot">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="260" fill="#1c1a16"/>
+          <rect x="50" y="150" width="300" height="5" rx="2" fill="#383630"/>
+          <rect x="70" y="65" width="180" height="115" rx="2" fill="#e8ddc8" opacity="0.62"/>
+          <rect x="78" y="72" width="10" height="102" fill="#ccc0a8" opacity="0.4"/>
+          <rect x="95" y="76" width="75" height="4" fill="#3a3a3a"/>
+          <rect x="95" y="85" width="140" height="2.5" fill="#4a4a4a"/>
+          <rect x="95" y="93" width="130" height="2.5" fill="#4a4a4a"/>
+          <rect x="95" y="101" width="135" height="2.5" fill="#4a4a4a"/>
+          <rect x="95" y="112" width="110" height="24" fill="#888" opacity="0.35"/>
+          <rect x="215" y="76" width="28" height="50" fill="#888" opacity="0.25"/>
+          <rect x="95" y="79" width="75" height="2.5" fill="#6a2020"/>
+          <rect x="95" y="90" width="140" height="2" fill="#6a2020"/>
+          <g transform="translate(300,185)">
+            <rect x="-8" y="-14" width="16" height="24" rx="2" fill="#2a2a2a" opacity="0.7"/>
+            <line x1="0" y1="-14" x2="0" y2="-28" stroke="#3a3a3a" stroke-width="4"/>
+          </g>
+        </svg>
+        <div class="frame-badge">CU · 緩推</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">2-9</span>
+          <span class="shot-type">插入鏡頭</span>
+        </div>
+        <div class="shot-title">報紙頭條 · 配槍遺失</div>
+        <div class="shot-desc">老師在辦公室滑手機。報紙頭條：「<strong>執勤中警察配槍遺失，在網咖與兒子衝突後失蹤</strong>」。旁壓崔支援升學檔案——<strong>大人世界的荒誕與學生的命運並置</strong>。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>中景 → 推至新聞特寫</span>
+          <span class="meta-item"><span class="dot dur"></span>~12s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCENE 3 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">03</div>
+    <div class="scene-info">
+      <h2>海邊 · 公交站</h2>
+      <div class="tags">
+        <span class="tag loc">海邊公交站</span>
+        <span class="tag time">下午</span>
+        <span class="tag type">外 / 日</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <div class="shot">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="rdsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7e98b0"/><stop offset="100%" stop-color="#bcc8d4"/></linearGradient>
+          </defs>
+          <rect width="400" height="260" fill="url(#rdsky)"/>
+          <rect y="165" width="400" height="95" fill="#7a7a78"/>
+          <line x1="0" y1="195" x2="400" y2="195" stroke="#999" stroke-width="2" stroke-dasharray="10,8"/>
+          <g transform="translate(130,158)">
+            <ellipse cx="0" cy="0" rx="7" ry="9" fill="#3a3a3a"/>
+            <rect x="-5" y="9" width="10" height="15" rx="2" fill="#3a3a3a"/>
+            <line x1="0" y1="9" x2="-14" y2="24" stroke="#3a3a3a" stroke-width="3.5"/>
+            <line x1="0" y1="9" x2="12" y2="22" stroke="#3a3a3a" stroke-width="3.5"/>
+            <line x1="5" y1="16" x2="10" y2="30" stroke="#3a3a3a" stroke-width="2.5"/>
+            <line x1="-5" y1="18" x2="-12" y2="30" stroke="#3a3a3a" stroke-width="2.5"/>
+            <rect x="-4" y="12" width="9" height="12" rx="1" fill="#4a4a4a"/>
+          </g>
+          <g transform="translate(65,155)">
+            <ellipse cx="0" cy="0" rx="6" ry="7" fill="#2a2a2a"/>
+            <rect x="-4" y="7" width="8" height="12" rx="1.5" fill="#2a2a2a"/>
+            <line x1="0" y1="7" x2="10" y2="18" stroke="#2a2a2a" stroke-width="3"/>
+            <line x1="0" y1="7" x2="-8" y2="16" stroke="#2a2a2a" stroke-width="3"/>
+            <path d="M-6,-7 Q0,-14 6,-7Z" fill="#2a2a2a"/>
+          </g>
+        </svg>
+        <div class="frame-badge">FS · 手持</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">3-2</span>
+          <span class="shot-type">全景 · 手持跟拍</span>
+        </div>
+        <div class="shot-title">追逐 · 奪包 · 撲倒</div>
+        <div class="shot-desc">支援從背後衝出奪走善宇背包狂奔。善宇追上將她撲倒在沙地——<strong>手持晃動，動作節奏急促</strong>。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>手持晃動 · 側面跟拍</span>
+          <span class="meta-item"><span class="dot dur"></span>~8s</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3-3 KEY -->
+    <div class="shot key">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sky3_3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#486890"/><stop offset="60%" stop-color="#7a90a8"/><stop offset="100%" stop-color="#a0a8b0"/></linearGradient>
+          </defs>
+          <rect width="400" height="260" fill="url(#sky3_3)"/>
+          <rect y="200" width="400" height="60" fill="#6a5a48"/>
+          <g transform="translate(200,100)">
+            <rect x="-15" y="18" width="30" height="45" rx="3" fill="#121212"/>
+            <ellipse cx="0" cy="6" rx="13" ry="15" fill="#121212"/>
+            <path d="M-13,-8 Q0,-22 13,-8Z" fill="#121212"/>
+            <line x1="12" y1="28" x2="72" y2="-10" stroke="#121212" stroke-width="6" stroke-linecap="round"/>
+            <rect x="64" y="-24" width="36" height="12" rx="2" fill="#2a2a2a"/>
+            <rect x="96" y="-22" width="7" height="8" rx="2" fill="#3a3a3a"/>
+            <circle cx="72" cy="-18" r="5" fill="#2a2a2a"/>
+            <rect x="58" y="-24" width="10" height="12" rx="1" fill="#3a3a3a"/>
+            <circle cx="58" cy="-18" r="4" fill="#080808"/>
+          </g>
+          <circle cx="50" cy="25" r="18" fill="#fff" opacity="0.5"/>
+          <circle cx="55" cy="22" r="16" fill="url(#sky3_3)" opacity="0.75"/>
+        </svg>
+        <div class="frame-badge key">CU · 槍口POV</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">3-3</span>
+          <span class="shot-type">特寫 · POV低角度</span>
+        </div>
+        <div class="shot-title">⚡ 空槍對峙 · 全片爆點</div>
+        <div class="shot-desc">支援從包裡掏出槍，對準善宇。<strong>低角度仰拍 —— 槍口直對鏡頭</strong>。扣下扳機——<strong>咔嗒。空槍。死寂。</strong>片名 SUMMER 再次浮現。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>低角度POV仰拍</span>
+          <span class="meta-item"><span class="dot dur"></span>~5s → 靜止2s</span>
+          <span class="meta-item"><span class="dot aud"></span>扳機聲 → 絕對死寂</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCENE 4 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">04</div>
+    <div class="scene-info">
+      <h2>島內河畔路 · 相遇</h2>
+      <div class="tags">
+        <span class="tag loc">海島河畔路</span>
+        <span class="tag time">下午</span>
+        <span class="tag type">外 / 日</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <div class="shot">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="rvbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7a808c"/><stop offset="100%" stop-color="#aeb4b8"/></linearGradient>
+          </defs>
+          <rect width="400" height="260" fill="url(#rvbg)"/>
+          <rect y="155" width="400" height="105" fill="#566070"/>
+          <ellipse cx="200" cy="168" rx="240" ry="5" fill="#6a7a88" opacity="0.35"/>
+          <rect y="138" width="400" height="20" fill="#6a6258"/>
+          <line x1="0" y1="148" x2="400" y2="148" stroke="#888" stroke-width="1" stroke-dasharray="8,10"/>
+          <g transform="translate(75,160)">
+            <ellipse cx="0" cy="-10" rx="8" ry="9" fill="#1e1e1e"/>
+            <rect x="-6" y="-1" width="12" height="16" rx="2" fill="#1e1e1e"/>
+            <line x1="-4" y1="2" x2="-12" y2="16" stroke="#1e1e1e" stroke-width="2.5"/>
+            <line x1="4" y1="2" x2="10" y2="14" stroke="#1e1e1e" stroke-width="2.5"/>
+          </g>
+          <g transform="translate(120,162)">
+            <ellipse cx="0" cy="-8" rx="7" ry="8" fill="#1e1e1e"/>
+            <rect x="-5" y="0" width="10" height="14" rx="2" fill="#1e1e1e"/>
+            <line x1="-3" y1="2" x2="-10" y2="14" stroke="#1e1e1e" stroke-width="2.5"/>
+            <line x1="3" y1="2" x2="9" y2="13" stroke="#1e1e1e" stroke-width="2.5"/>
+          </g>
+          <rect x="60" y="190" width="2" height="40" rx="1" fill="#8a6440" transform="rotate(-18,61,190)"/>
+          <rect x="48" y="215" width="24" height="10" rx="5" fill="#8a6440" transform="rotate(-18,60,220)"/>
+          <g transform="translate(270,155)">
+            <ellipse cx="0" cy="-8" rx="7" ry="8" fill="#2a2a2a"/>
+            <rect x="-5" y="0" width="10" height="16" rx="2" fill="#2a2a2a"/>
+            <line x1="0" y1="0" x2="8" y2="16" stroke="#2a2a2a" stroke-width="2.5"/>
+            <line x1="0" y1="0" x2="-6" y2="14" stroke="#2a2a2a" stroke-width="2.5"/>
+          </g>
+          <g transform="translate(310,152)">
+            <ellipse cx="0" cy="-7" rx="6" ry="7" fill="#2a2a2a"/>
+            <rect x="-4" y="0" width="8" height="14" rx="1.5" fill="#2a2a2a"/>
+            <line x1="0" y1="0" x2="6" y2="14" stroke="#2a2a2a" stroke-width="2"/>
+            <line x1="0" y1="0" x2="-5" y2="12" stroke="#2a2a2a" stroke-width="2"/>
+            <path d="M-6,-14 Q0,-22 6,-14Z" fill="#2a2a2a"/>
+          </g>
+        </svg>
+        <div class="frame-badge">LS · 固定</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">4-1</span>
+          <span class="shot-type">Long Shot</span>
+        </div>
+        <div class="shot-title">河畔 · 兩個混混</div>
+        <div class="shot-desc">陰天。楊家旻和尹喆輝坐在路的一端低著頭，旁邊有壞掉的棒球棍。李尚炫（中國轉學生）經過——<strong>短暫衝突後逃跑</strong>。善宇和支援隨後出現，支援亮槍，混混們逃跑。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>遠景靜止</span>
+          <span class="meta-item"><span class="dot dur"></span>~20s 組合</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCENE 5 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">05</div>
+    <div class="scene-info">
+      <h2>學校 · 黃昏</h2>
+      <div class="tags">
+        <span class="tag loc">連廊 / 辦公室</span>
+        <span class="tag time">黃昏</span>
+        <span class="tag type">外 & 內 / 日</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <div class="shot key">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="260" fill="#1c1a16"/>
+          <polygon points="130,0 270,0 210,160 140,160" fill="#2a3848" opacity="0.12"/>
+          <rect x="145" y="8" width="90" height="55" rx="1" fill="none" stroke="#333" stroke-width="1.5"/>
+          <line x1="190" y1="8" x2="190" y2="63" stroke="#333" stroke-width="1"/>
+          <rect x="50" y="155" width="300" height="4" rx="1" fill="#2e2e2e"/>
+          <rect x="130" y="115" width="60" height="40" rx="1" fill="#282622"/>
+          <rect x="135" y="119" width="50" height="3" fill="#34322e"/>
+          <rect x="135" y="126" width="50" height="3" fill="#34322e"/>
+          <rect x="135" y="133" width="50" height="3" fill="#34322e"/>
+          <rect x="148" y="108" width="20" height="9" rx="1" fill="#5a5a5a"/>
+          <rect x="150" y="110" width="16" height="5" rx="1" fill="#4a4a4a"/>
+          <rect x="150" y="109" width="12" height="2" fill="#7a8a9a" opacity="0.25"/>
+          <line x1="180" y1="112" x2="192" y2="122" stroke="#a33" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="192" y1="122" x2="198" y2="118" stroke="#a33" stroke-width="2.5" stroke-linecap="round"/>
+          <g transform="translate(280,135)">
+            <ellipse cx="0" cy="0" rx="10" ry="12" fill="#1e1e1e"/>
+            <rect x="-7" y="12" width="14" height="20" rx="2" fill="#1e1e1e"/>
+            <line x1="0" y1="12" x2="10" y2="28" stroke="#1e1e1e" stroke-width="4"/>
+            <line x1="5" y1="20" x2="15" y2="35" stroke="#1e1e1e" stroke-width="3"/>
+          </g>
+        </svg>
+        <div class="frame-badge key">CU · 伏筆</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">5-2</span>
+          <span class="shot-type">關鍵伏筆鏡頭</span>
+        </div>
+        <div class="shot-title">彈匣在老師手中</div>
+        <div class="shot-desc">辦公室。老師在椅子上<strong>漫不經心地把玩 BB 彈匣</strong>——善宇在海灘挖了一整個黃昏的東西，就在這裡，在大人手裡當一個指尖陀螺。<strong>全片最殘忍的伏筆</strong>。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>彈匣特寫 → 拉遠至中景</span>
+          <span class="meta-item"><span class="dot dur"></span>~15s</span>
+        </div>
+        <div class="dialogue-block">
+          <span class="char">女學生D</span> 「老師好——都完事了？」<br>
+          <span class="char">老師</span> 「嗯嗯。放在那吧，謝謝你了。」<br>
+          ——他用彈匣代替手指指向對面桌子。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCENE 6 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">06</div>
+    <div class="scene-info">
+      <h2>海灘 · 挖掘</h2>
+      <div class="tags">
+        <span class="tag loc">海島海灘</span>
+        <span class="tag time">黃昏 → 日落</span>
+        <span class="tag type">外 / 日</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <div class="shot key">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sun6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#58406c"/><stop offset="22%" stop-color="#b45c4c"/><stop offset="48%" stop-color="#d48c5c"/><stop offset="72%" stop-color="#c4a474"/><stop offset="100%" stop-color="#d4c0a0"/></linearGradient>
+          </defs>
+          <rect width="400" height="260" fill="url(#sun6)"/>
+          <circle cx="310" cy="88" r="24" fill="#e89c48" opacity="0.75"/>
+          <circle cx="310" cy="88" r="30" fill="#e89c48" opacity="0.25"/>
+          <rect y="125" width="400" height="3" fill="#604870" opacity="0.3"/>
+          <rect y="170" width="400" height="90" fill="#c4a878" opacity="0.6"/>
+          <g transform="translate(90,180)">
+            <rect x="-3" y="-8" width="6" height="14" rx="1" fill="#4a3624" opacity="0.7"/>
+            <circle cx="0" cy="-11" r="3.5" fill="#4a3624" opacity="0.7"/>
+          </g>
+          <g transform="translate(160,186)">
+            <rect x="-3" y="-8" width="6" height="14" rx="1" fill="#3a2614" opacity="0.7"/>
+            <circle cx="0" cy="-11" r="3.5" fill="#3a2614" opacity="0.7"/>
+          </g>
+          <ellipse cx="120" cy="205" rx="8" ry="2.5" fill="#a08060" opacity="0.35"/>
+          <ellipse cx="190" cy="210" rx="10" ry="3" fill="#a08060" opacity="0.35"/>
+          <ellipse cx="150" cy="218" rx="6" ry="2" fill="#a08060" opacity="0.3"/>
+          <ellipse cx="240" cy="200" rx="9" ry="2.5" fill="#a08060" opacity="0.35"/>
+          <ellipse cx="280" cy="215" rx="7" ry="2" fill="#a08060" opacity="0.3"/>
+        </svg>
+        <div class="frame-badge key">LS · 蒙太奇</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">6-1〜3</span>
+          <span class="shot-type">蒙太奇序列</span>
+        </div>
+        <div class="shot-title">挖沙蒙太奇 · 日落</div>
+        <div class="shot-desc">夕陽將沙灘染成金橙色。挖沙蒙太奇：善宇獨挖 → 支援找來鏟子 → 兩人一起挖 → 沙坑遍布 → <strong>日落。他們沒有找到彈匣。</strong>兩人靜坐石塊上，滿地坑洞如翻過的墓地。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>遠景 + 多角度快速剪接</span>
+          <span class="meta-item"><span class="dot dur"></span>~60s 蒙太奇</span>
+          <span class="meta-item"><span class="dot aud"></span>配樂逐漸淡入</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCENE 7 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">07</div>
+    <div class="scene-info">
+      <h2>教務處 · 夜的靜物</h2>
+      <div class="tags">
+        <span class="tag loc">學校教務處</span>
+        <span class="tag time">傍晚</span>
+        <span class="tag type">內 / 夜</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <div class="shot">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="260" fill="#080810"/>
+          <polygon points="100,0 240,0 170,160 80,160" fill="#1e2e44" opacity="0.1"/>
+          <rect x="110" y="6" width="90" height="55" rx="1" fill="none" stroke="#2a2a32" stroke-width="1.2"/>
+          <line x1="155" y1="6" x2="155" y2="61" stroke="#2a2a32" stroke-width="0.8"/>
+          <rect x="45" y="155" width="310" height="4" rx="1" fill="#222222"/>
+          <rect x="120" y="112" width="56" height="42" rx="1" fill="#242420"/>
+          <rect x="125" y="115" width="46" height="3.5" fill="#2e2e2a"/>
+          <rect x="125" y="123" width="46" height="3.5" fill="#2e2e2a"/>
+          <rect x="125" y="131" width="46" height="3.5" fill="#2e2e2a"/>
+          <rect x="140" y="104" width="20" height="9" rx="1" fill="#4a4a4a"/>
+          <rect x="142" y="106" width="16" height="5" rx="1" fill="#3a3a3a"/>
+          <rect x="142" y="105" width="12" height="2" fill="#6678a0" opacity="0.2"/>
+          <line x1="168" y1="108" x2="178" y2="116" stroke="#933" stroke-width="3" stroke-linecap="round"/>
+          <line x1="178" y1="116" x2="184" y2="112" stroke="#933" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div class="frame-badge">CU · 緩慢平移</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">7-1</span>
+          <span class="shot-type">特寫 · 靜物</span>
+        </div>
+        <div class="shot-title">月光下的彈匣與紅筆</div>
+        <div class="shot-desc">教務處空無一人，月光從窗戶照入。鏡頭緩慢平移過檔案夾——<strong>彈匣和紅色記號筆安靜地躺在最上面</strong>。金屬表面反射冷光。善宇要的東西近在咫尺，卻永遠錯過。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>緩慢平移 · 靜物凝視</span>
+          <span class="meta-item"><span class="dot dur"></span>~8s</span>
+          <span class="meta-item"><span class="dot aud"></span>絕對寂靜</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCENE 8 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">08</div>
+    <div class="scene-info">
+      <h2>公路 · 搶車 · 黑夜奔跑</h2>
+      <div class="tags">
+        <span class="tag loc">海島公路邊</span>
+        <span class="tag time">日落後 / 夜</span>
+        <span class="tag type">外 / 夜</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <div class="shot key">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="260" fill="#060810"/>
+          <rect y="170" width="400" height="90" fill="#121218"/>
+          <line x1="0" y1="195" x2="400" y2="195" stroke="#28282c" stroke-width="1.5" stroke-dasharray="12,10"/>
+          <g transform="translate(120,150)">
+            <rect x="0" y="0" width="140" height="50" rx="9" fill="#7a2828"/>
+            <rect x="18" y="-12" width="55" height="33" rx="7" fill="#5a1a1a"/>
+            <rect x="23" y="-7" width="20" height="22" rx="2" fill="#3a5068" opacity="0.35"/>
+            <rect x="50" y="-7" width="20" height="22" rx="2" fill="#3a5068" opacity="0.35"/>
+            <rect x="85" y="4" width="22" height="24" rx="2" fill="#5a1a1a"/>
+            <circle cx="28" cy="53" r="11" fill="#0a0a0a"/>
+            <circle cx="112" cy="53" r="11" fill="#0a0a0a"/>
+            <polygon points="-10,38 -60,65 -60,20" fill="#ffe8a0" opacity="0.1"/>
+            <polygon points="-10,38 -80,75 -80,10" fill="#ffe8a0" opacity="0.05"/>
+          </g>
+          <g transform="translate(175,142)">
+            <ellipse cx="0" cy="0" rx="7" ry="8" fill="#121212"/>
+            <rect x="-5" y="8" width="10" height="12" rx="1.5" fill="#121212"/>
+            <line x1="4" y1="12" x2="24" y2="18" stroke="#121212" stroke-width="3.5"/>
+            <rect x="20" y="14" width="14" height="6" rx="1" fill="#2a2a2a"/>
+          </g>
+        </svg>
+        <div class="frame-badge key">MS · 手持</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">8-2</span>
+          <span class="shot-type">中景 · 手持</span>
+        </div>
+        <div class="shot-title">紅車 · 持槍搶車</div>
+        <div class="shot-desc">夜色中紅色轎車駛來。司機：「你們兩個小屁孩幹嘛呢？」支援掏出槍，手臂撐直晃晃地奔向副駕駛座——<strong>司機從疑問轉為恐懼，狼狽逃跑</strong>。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>手持晃動 · 緊張節奏</span>
+          <span class="meta-item"><span class="dot dur"></span>~15s</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="shot">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="260" fill="#000004"/>
+          <rect x="30" y="70" width="340" height="150" rx="14" fill="none" stroke="#14141c" stroke-width="1.5"/>
+          <path d="M40,95 Q200,70 360,95" fill="none" stroke="#14141c" stroke-width="1.2"/>
+          <ellipse cx="100" cy="158" rx="24" ry="7" fill="none" stroke="#14141c" stroke-width="2" transform="rotate(-15,100,158)"/>
+          <g transform="translate(100,122)" opacity="0.5">
+            <ellipse cx="0" cy="0" rx="10" ry="12" fill="#040410"/>
+            <rect x="-7" y="12" width="14" height="18" rx="2" fill="#040410"/>
+          </g>
+          <g transform="translate(260,134)" opacity="0.4">
+            <ellipse cx="0" cy="0" rx="12" ry="9" fill="#040410"/>
+            <rect x="-10" y="9" width="20" height="7" rx="2" fill="#040410"/>
+          </g>
+          <circle cx="235" cy="125" r="10" fill="#3a4868" opacity="0.06"/>
+          <circle cx="235" cy="125" r="5" fill="#5a6890" opacity="0.08"/>
+        </svg>
+        <div class="frame-badge">CU · 車內固定</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">8-3</span>
+          <span class="shot-type">車內鏡頭</span>
+        </div>
+        <div class="shot-title">車內黑暗 · 絕對寧靜</div>
+        <div class="shot-desc">善宇坐駕駛座，支援躺後座。車燈亮了一會——支援玩手機發出一點光。燈滅。大燈也關。<strong>一片漆黑。太寧靜了。</strong>環境音逐漸消失至絕對安靜。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>車內固定 · 光線消失</span>
+          <span class="meta-item"><span class="dot dur"></span>~15s</span>
+          <span class="meta-item"><span class="dot aud"></span>環境音消失 → 絕對安靜</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="shot key">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="nrun" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#000814"/><stop offset="58%" stop-color="#080e1c"/><stop offset="100%" stop-color="#161820"/></linearGradient>
+          </defs>
+          <rect width="400" height="260" fill="url(#nrun)"/>
+          <circle cx="70" cy="36" r="14" fill="#e0e0ea" opacity="0.25"/>
+          <circle cx="70" cy="36" r="17" fill="#e0e0ea" opacity="0.08"/>
+          <path d="M0,190 Q100,184 200,188 Q300,192 400,186 L400,260 L0,260Z" fill="#0a0a10"/>
+          <g opacity="0.35">
+            <polygon points="50,190 62,108 74,190" fill="#000a12"/>
+            <polygon points="62,190 76,96 90,190" fill="#000a12"/>
+            <polygon points="320,188 332,115 344,188" fill="#000a12"/>
+            <polygon points="340,188 356,100 372,188" fill="#000a12"/>
+          </g>
+          <g transform="translate(260,178)">
+            <ellipse cx="0" cy="0" rx="6" ry="7" fill="#04040c"/>
+            <rect x="-4" y="7" width="8" height="12" rx="1.5" fill="#04040c"/>
+            <line x1="0" y1="7" x2="-12" y2="18" stroke="#04040c" stroke-width="3"/>
+            <line x1="0" y1="7" x2="10" y2="14" stroke="#04040c" stroke-width="3"/>
+            <line x1="4" y1="12" x2="9" y2="22" stroke="#04040c" stroke-width="2.5"/>
+            <line x1="-4" y1="13" x2="-10" y2="22" stroke="#04040c" stroke-width="2.5"/>
+          </g>
+        </svg>
+        <div class="frame-badge key">FS · 狂奔 · BGM</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">8-4</span>
+          <span class="shot-type">全景 · 手持跟拍</span>
+        </div>
+        <div class="shot-title">⚡ 奔跑 · 全片情緒爆發</div>
+        <div class="shot-desc">善宇突然打開車門——<strong>BGM進入。</strong>公路、海灘、土路、森林中狂奔。最終停在一堆寧靜無聲的空地上。空鏡頭。<strong>從急促到絕對靜止 —— 全片節奏弧線的高峰。</strong></div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>手持狂奔跟拍 → 定鏡空地</span>
+          <span class="meta-item"><span class="dot dur"></span>~30s</span>
+          <span class="meta-item"><span class="dot aud"></span>BGM · 狂奔 → 寂靜</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCENE 9 ═══════════ -->
+<section class="scene">
+  <div class="scene-header">
+    <div class="scene-num">09</div>
+    <div class="scene-info">
+      <h2>派出所 · 新聞</h2>
+      <div class="tags">
+        <span class="tag loc">警察局門口</span>
+        <span class="tag time">上午</span>
+        <span class="tag type">外 / 日</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shots">
+    <div class="shot key">
+      <div class="frame-panel">
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="260" fill="#1c1a16"/>
+          <rect y="175" width="400" height="3" fill="#323028"/>
+          <rect y="178" width="400" height="82" fill="#24221c"/>
+          <rect x="50" y="68" width="300" height="120" rx="2" fill="#e0d8c0" opacity="0.6"/>
+          <rect x="60" y="78" width="250" height="4" fill="#4a4a4a"/>
+          <rect x="60" y="88" width="230" height="2.5" fill="#5a5a5a"/>
+          <rect x="60" y="96" width="240" height="2.5" fill="#5a5a5a"/>
+          <rect x="60" y="108" width="190" height="46" fill="#888" opacity="0.25"/>
+          <rect x="60" y="80" width="80" height="4.5" fill="#6a1818"/>
+          <g transform="translate(230,170)">
+            <line x1="0" y1="0" x2="14" y2="-26" stroke="#c4a888" stroke-width="3.5" stroke-linecap="round"/>
+            <ellipse cx="16" cy="-28" rx="6" ry="7" fill="#c4a888" opacity="0.7"/>
+          </g>
+          <rect x="175" y="95" width="80" height="14" fill="#ffe8a0" opacity="0.08"/>
+        </svg>
+        <div class="frame-badge key">ECU · 尾聲</div>
+      </div>
+      <div class="info-panel">
+        <div class="info-top">
+          <span class="shot-id">9-2</span>
+          <span class="shot-type">極端特寫 · 尾聲</span>
+        </div>
+        <div class="shot-title">報紙上的最後一行字</div>
+        <div class="shot-desc">警察把報紙放到檯面，手指向最下方最小的一行字。鏡頭緩推——<strong>「當天丟失的槍支和逃跑的學生都被發現了，警方表示學生和槍支之間沒有直接關係。」</strong>——成人世界一句話，抹掉他們做過的所有事。</div>
+        <div class="shot-meta">
+          <span class="meta-item"><span class="dot cam"></span>中景 → 緩推至新聞字樣</span>
+          <span class="meta-item"><span class="dot dur"></span>~10s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="transition">CUT TO BLACK · END</div>
+</section>
+
+</div>
+
+<footer class="end-card">
+  <h3>END</h3>
+  <p>SUMMER · 我的發科 · 褚東泫 · 9幕42鏡</p>
+</footer>
+
+</body>
+</html>
